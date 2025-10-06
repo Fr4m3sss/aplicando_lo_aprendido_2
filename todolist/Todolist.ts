@@ -184,3 +184,72 @@ async function listCompletedTasks(): Promise<void> {
     }
 }
 //---------------------------------------//
+
+async function showViewTasksMenu(): Promise<void> {
+    let exit: boolean = false;
+    do {
+        console.clear();
+        let tasksMenu: number = await getMenuNumber(`¿Qué tareas deseas ver?
+
+[1] Todas
+[2] Pendientes
+[3] En curso
+[4] Terminada
+[0] Volver
+
+Ingresa una opción: `);
+
+        switch (tasksMenu) {
+            case 1:
+                await listAllTasks();
+                break;
+            case 2:
+                await listPendingTasks();
+                break;
+            case 3:
+                await listInProgressTasks();
+                break;
+            case 4:
+                await listCompletedTasks();
+                break;
+
+            case 0:
+                console.log("Volviendo al menú principal");
+                exit = true;
+                break;
+            default:
+                break;
+        }
+    } while (!exit);
+}
+async function showTaskDetails(selectedTask: Task): Promise<void> {
+    let exit: boolean = false;
+
+    do {
+        console.clear();
+        console.log(`
+Título: ${selectedTask.title || "Sin título"}
+Descripción: ${selectedTask.description || "Sin descripción"}
+Estado: ${selectedTask.status || "Sin estado"}
+Dificultad: ${selectedTask.difficulty || "Sin dificultad"}
+Creada el: ${selectedTask.createdAt?.toLocaleString() || "Desconocida"}
+Vencimiento: ${selectedTask.dueDate ? selectedTask.dueDate.toLocaleString() : "Sin fecha"}
+Última edición: ${selectedTask.lastEdited ? selectedTask.lastEdited.toLocaleString() : "Nunca"}
+        `);
+
+        let option = await getStringInput("Presiona E para editar o 0 para volver: ");
+
+        switch(option.toUpperCase()) {
+            case "E":
+                await editTask(selectedTask);
+                console.log("¡Tarea editada!");
+                break;
+            case "0":
+                exit = true;
+                break;
+            default:
+                console.log("Opción inválida.");
+                break;
+        }
+    } while (!exit);
+}

@@ -381,3 +381,52 @@ deja en blanco para mantenerla, o escribe un espacio para borrar: `
     }
 }
 //---------------------------------------//
+
+
+//-------Funcion para Buscar tareas--------//
+
+async function searchTasksByTitle(searchTerm: string): Promise<Task[]> {
+    return tasks.filter(task =>
+        task.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+}
+
+async function showSearchTaskMenu(): Promise<void> {
+    console.clear();
+    const searchTerm: string = await getStringInput(
+        "Ingresa el título o parte del título a buscar (o deja en blanco para volver): "
+    );
+
+    if (searchTerm === "") {
+        // Si deja en blanco, volvemos al menú anterior
+        return;
+    }
+
+    const results: Task[] = await searchTasksByTitle(searchTerm);
+
+    if (results.length === 0) {
+        console.log("\nNo se encontraron tareas que coincidan con tu búsqueda.\n");
+        return;
+    }
+
+    console.log("\nTareas encontradas:\n");
+
+    results.forEach((task: Task, index: number) => {
+        console.log(`${index + 1}. ${task.title}`);
+    });
+
+    const userInput: number = await getMenuNumber(
+        "\nIngresa el número de la tarea para ver detalles, o 0 para volver: "
+    );
+
+    if (userInput === 0) return;
+
+    if (userInput >= 1 && userInput <= results.length) {
+        const selectedTask: Task = results[userInput - 1]!;
+        await showTaskDetails(selectedTask);
+    } else {
+        console.log("Opción inválida. Intenta de nuevo.");
+        await showSearchTaskMenu();
+    }
+}
+//---------------------------------------//

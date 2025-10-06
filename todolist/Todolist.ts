@@ -253,3 +253,131 @@ Vencimiento: ${selectedTask.dueDate ? selectedTask.dueDate.toLocaleString() : "S
         }
     } while (!exit);
 }
+
+//----Funciones de edición de tareas----//
+
+async function editTask(selectedTask: Task): Promise<void> {
+    console.clear();
+    console.log(`Estas editando la tarea: ${selectedTask.title}`);
+
+    await editTitle(selectedTask);
+    await editDescription(selectedTask);
+    await editStatus(selectedTask);
+    await editDifficulty(selectedTask);
+    await editDueDate(selectedTask);
+
+    selectedTask.lastEdited = new Date();
+    console.log("¡Tarea guardada!");
+}
+async function editTitle(selectedTask: Task): Promise<void> {
+    console.clear();
+    const input: string = await getStringInput(
+        "1. Ingresa un nuevo título (deja en blanco para mantenerlo, espacio para borrar): "
+    );
+
+    if (input === "") {
+        // Mantener título actual
+    } else if (input === " ") {
+        selectedTask.title = "";
+    } else {
+        selectedTask.title = input;
+    }
+}
+async function editDescription(selectedTask: Task): Promise<void> {
+    console.clear();
+    const input: string = await getStringInput(
+        "2. Ingresa una nueva descripción (deja en blanco para mantenerla, espacio para borrar): "
+    );
+
+    if (input === "") {
+        // Mantener descripción actual
+    } else if (input === " ") {
+        selectedTask.description = "";
+    } else {
+        selectedTask.description = input;
+    }
+}
+async function editStatus(selectedTask: Task): Promise<void> {
+    console.clear();
+    const editStatus: string = (
+        await getStringInput(
+            `3. Ingresa un nuevo estado:
+- pendiente
+- en progreso
+- completado`
+        )
+    ).toLowerCase();
+
+    switch (editStatus) {
+        case "":
+            break; // Mantener estado
+        case " ":
+            selectedTask.status = "";
+            break;
+        case "pendiente":
+        case "en progreso":
+        case "completado":
+            selectedTask.status = editStatus as Status;
+            break;
+        default:
+            console.log("Has ingresado un estado inválido.");
+    }
+}
+async function editDifficulty(selectedTask: Task): Promise<void> {
+    console.clear();
+    const editDifficulty: string = (
+        await getStringInput(
+            `4. Ingresa una nueva dificultad:
+- facil
+- medio
+- dificil`
+        )
+    ).toLowerCase();
+
+    switch (editDifficulty) {
+        case "":
+            break; // Mantener dificultad
+        case " ":
+            selectedTask.difficulty = "";
+            break;
+        case "facil":
+        case "medio":
+        case "dificil":
+            selectedTask.difficulty = editDifficulty as Difficulty;
+            break;
+        default:
+            console.log("Has ingresado una dificultad inválida.");
+    }
+}
+async function editDueDate(selectedTask: Task): Promise<void> {
+    const input: string = await getStringInput(
+        `5. Ingresa nueva fecha de vencimiento (dd/mm/yyyy)
+deja en blanco para mantenerla, o escribe un espacio para borrar: `
+    );
+
+    if (input === "") {
+        return; // Mantener fecha actual
+    } else if (input === " ") {
+        selectedTask.dueDate = null;
+        return;
+    } else {
+        const parts: string[] = input.split("/");
+        if (parts.length === 3) {
+            const day: number = parseInt(parts[0]!, 10);
+            const month: number = parseInt(parts[1]!, 10) - 1;
+            const year: number = parseInt(parts[2]!, 10);
+
+
+            const newDate: Date = new Date(year, month, day);
+
+            if (!isNaN(newDate.getTime())) {
+                selectedTask.dueDate = newDate;
+            } else {
+                console.log("Fecha inválida. Debe ser un día válido.");
+            }
+        } else {
+            console.log("Formato incorrecto. Usa dd/mm/yyyy.");
+        }
+    }
+}
+//---------------------------------------//

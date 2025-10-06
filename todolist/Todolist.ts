@@ -255,7 +255,6 @@ Vencimiento: ${selectedTask.dueDate ? selectedTask.dueDate.toLocaleString() : "S
 }
 
 //----Funciones de edición de tareas----//
-
 async function editTask(selectedTask: Task): Promise<void> {
     console.clear();
     console.log(`Estas editando la tarea: ${selectedTask.title}`);
@@ -384,13 +383,11 @@ deja en blanco para mantenerla, o escribe un espacio para borrar: `
 
 
 //-------Funcion para Buscar tareas--------//
-
 async function searchTasksByTitle(searchTerm: string): Promise<Task[]> {
     return tasks.filter(task =>
         task.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 }
-
 async function showSearchTaskMenu(): Promise<void> {
     console.clear();
     const searchTerm: string = await getStringInput(
@@ -430,3 +427,124 @@ async function showSearchTaskMenu(): Promise<void> {
     }
 }
 //---------------------------------------//
+
+//------Funcion para agregar tareas-------------//
+async function showAddTaskMenu(): Promise<void> {
+    console.clear();
+    console.log("\n--- Agregar nueva tarea ---\n");
+
+    const title: string = await getStringInput("Título: ");
+    const description: string = await getStringInput("Descripción: ");
+    
+    const status: Status = (await getStringInput(`
+Estado:
+- pendiente
+- en progreso
+- completado
+Ingresa uno: `)) as Status;
+
+    const difficulty: Difficulty = (await getStringInput(`
+Dificultad:
+- facil
+- medio
+- dificil
+Ingresa uno: `)) as Difficulty;
+
+    const dueDate: Date | null = await getDueDateInput();
+
+    await addNewTask({ title, description, status, difficulty, dueDate });
+}
+async function addNewTask({
+    title,
+    description,
+    status,
+    difficulty,
+    dueDate
+}: {
+    title: string;
+    description: string;
+    status: Status;
+    difficulty: Difficulty;
+    dueDate: Date | null;
+}): Promise<void> {
+    const newTask: Task = {
+        title,
+        description,
+        status,
+        difficulty,
+        createdAt: new Date(),
+        dueDate
+    };
+
+    tasks.push(newTask);
+    console.log("\n✅ Tarea agregada correctamente.\n");
+}
+async function getDueDateInput(): Promise<Date | null> {
+    while (true) {
+        const input: string = await getStringInput(
+            "Ingresa la fecha de vencimiento (dd/mm/yyyy), deja en blanco para no ponerla: "
+        );
+
+        if (input === "" || input === " ") {
+            return null; // el usuario no quiere poner fecha
+        } else {
+            const parts: string[] = input.split("/");
+            if (parts.length === 3) {
+                const day: number = parseInt(parts[0]!, 10);
+                const month: number = parseInt(parts[1]!, 10) - 1; // JS cuenta meses desde 0
+                const year: number = parseInt(parts[2]!, 10);
+
+                const nuevaFecha: Date = new Date(year, month, day);
+
+                if (!isNaN(nuevaFecha.getTime())) {
+                    return nuevaFecha; // fecha válida
+                } else {
+                    console.log("Fecha inválida, intenta nuevamente.");
+                }
+            } else {
+                console.log("Formato incorrecto. Usa dd/mm/yyyy.");
+            }
+        }
+    }
+}
+//---------------------------------------//
+
+//-----------// MAIN MENU //-----------// 
+async function showMainMenu(): Promise<void> {
+    let exit: boolean = false;
+    do {
+        console.clear();
+        let mainMenu: number = await getMenuNumber(`¡Hola Olivia!
+
+¿Qué deseas hacer hoy?
+
+[1] Ver mis tareas
+[2] Buscar mis tareas
+[3] Agregar una tarea
+[4] Salir
+
+Ingresa una opción: `);
+
+        switch (mainMenu) {
+            case 1:
+                await showViewTasksMenu();
+                break;
+            case 2:
+                await showSearchTaskMenu();
+                break;
+            case 3:
+                await showAddTaskMenu();
+                break;
+            case 4:
+                console.log("¡Adiós!");
+                rl.close();
+                exit = true;
+                break;
+            default:
+                console.log("ERROR: La opción ingresada no se encuentra en el rango de opciones validas.");
+                break;
+        }
+    } while (!exit);
+}
+showMainMenu();
+//------------------------------------//

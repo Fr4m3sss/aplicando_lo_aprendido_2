@@ -46,3 +46,36 @@ const tasks: Task[] = [
         dueDate: null
     }
 ];
+
+
+//-----Funciones de entrada de datos------//
+async function getStringInput(message: string): Promise<string> {
+    let input: string;
+    const MAX_LENGTH = 500;
+
+    while (true) {
+        input = await rl.question(message);
+        input = input.trim();
+
+        if (input === "") {
+            console.log("ERROR: No puedes dejarlo vacío.");
+        } else if (input.length > MAX_LENGTH) {
+            console.log("ERROR: La entrada es demasiado larga.");
+        }
+        else {
+            return input;
+        }
+    }
+}
+async function getMenuNumber(message: string): Promise<number> {
+    let input = await rl.question(message);
+    let number = Number(input);
+
+    if (isNaN(number) || !Number.isInteger(number)) {
+        console.log("ERROR: La opcion ingresada no es valida, debes ingresar un numero entero.");
+        return getMenuNumber(message);
+    } else {
+        return number;
+    }
+}
+//----------------------------------------//

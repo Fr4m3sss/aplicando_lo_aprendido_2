@@ -1,0 +1,7 @@
+ejercicio 1, Considera el lenguaje TypeScript acotado al paradigma de programación estructurada y analízalo en términos de los cuatro componentes de un paradigma mencionados por Kuhn:
+
+Generalización simbólica:
+TypeScript es como JavaScript, pero podés poner tipos a todo. O sea, cuando hacés una variable, podés decir “esto es un número”, “esto es un texto” o “esto es un true/false”, y así no te saltan errores raros después. Lo mismo con las funciones: podés marcar qué cosas reciben y qué devuelven. También tiene clases e interfaces para ordenar mejor el código y que no sea un quilombo leerlo. En resumen, te ayuda a que tu programa sea más predecible y evita que aparezcan problemas que en JavaScript solo te das cuenta cuando ya lo corrés.
+
+Creencias de los profesionales:
+La mayoría piensa que TypeScript da más seguridad y orden que JavaScript solo. Al tener tipos, muchos errores se detectan antes de correr el programa. Además, mantiene el código más limpio y entendible en proyectos grandes, y el editor ayuda un montón con autocompletado y sugerencias, haciendo que programar sea más rápido y con menos chances de mandar cualquiera.
